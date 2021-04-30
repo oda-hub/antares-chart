@@ -16,6 +16,24 @@ spec:
         app.kubernetes.io/name: {{ include "chart.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      volumes:
+    {{- if (default false .Values.oda.use_hostpath) }}
+      - name: scratch
+        hostPath:
+          path: {{ .Values.oda.worker_scratch }}/dda
+          type: DirectoryOrCreate
+      - name: filelogdir
+        hostPath:
+          path: {{ .Values.oda.worker_scratch }}/dda-logs
+          type: DirectoryOrCreate
+    {{- else }}
+      - name: scratch
+        persistentVolumeClaim:
+          claimName: results-scratch
+      - name: filelogdir
+        persistentVolumeClaim:
+          claimName: filelogdir
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -51,10 +69,11 @@ spec:
             timeoutSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          # env:
-          # - name: ODA_SPARQL_ROOT
-          #   value: "http://fuseki.internal.odahub.io/dataanalysis"
-          # TODO: config path?
+          volumeMounts:
+          - mountPath: /antares/output
+            name: scratch
+          - mountPath: /var/log/containers/
+            name: filelogdir
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

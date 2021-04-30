@@ -1,0 +1,26 @@
+{{ if not (default false .Values.oda.use_hostpath) }}
+
+{{- $root := . -}}
+{{ range .Values.allocate_volumes }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .name }}
+spec:
+  {{ if eq (default "ReadWriteMany" .access_mode) "ReadWriteMany" }}
+  storageClassName: {{ $root.Values.storage_class_rwmany }} 
+  accessModes:
+    - ReadWriteMany
+  {{ else }}
+  storageClassName: {{ $root.Values.storage_class }} 
+  accessModes:
+    - ReadWriteOnce
+  {{ end }}
+  resources:
+    requests:
+      storage: {{ .size }}
+{{ end }}
+
+
+{{ end }}

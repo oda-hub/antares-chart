@@ -36,7 +36,7 @@ service:
   port: 8000
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: #{}
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     kubernetes.io/ingress.class: nginx
@@ -45,9 +45,6 @@ ingress:
   - host: in.oda.virgoua.org
     paths:
     - /dev/antares(/|$)(.*) # set environment from elsewhere
-  - host: in.odahub.io
-    paths:
-    - /dev/antares(/|$)(.*)
   # - host: antares.staging-1-3.odahub.io
   #   paths:
   #   - /()(.*)
@@ -70,3 +67,12 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+allocate_volumes:
+- name: results-scratch
+  size: 1G
+- name: filelogdir
+  size: 1G
+
+oda:
+  use_hostpath: false
