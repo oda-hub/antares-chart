@@ -29,10 +29,10 @@ spec:
     {{- else }}
       - name: scratch
         persistentVolumeClaim:
-          claimName: results-scratch
+          claimName: antares-scratch
       - name: filelogdir
         persistentVolumeClaim:
-          claimName: filelogdir
+          claimName: antares-filelogdir
     {{- end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

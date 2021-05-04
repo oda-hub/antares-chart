@@ -69,9 +69,9 @@ tolerations: []
 affinity: {}
 
 allocate_volumes:
-- name: results-scratch
+- name: antares-scratch
   size: 1G
-- name: filelogdir
+- name: antares-filelogdir
   size: 1G
 
 oda:
