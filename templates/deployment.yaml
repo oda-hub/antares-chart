@@ -34,6 +34,9 @@ spec:
         persistentVolumeClaim:
           claimName: antares-filelogdir
     {{- end }}
+      - name: antares-config-volume
+        configMap:
+          name: antares-config
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -74,6 +77,10 @@ spec:
             name: scratch
           - mountPath: /var/log/containers/
             name: filelogdir
+          - mountPath: /antares/config.yml
+            name: antares-config-volume
+            subPath: config.yml
+            readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
